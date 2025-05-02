@@ -1,0 +1,8 @@
+# 環境構築
+/fibapi_env
+
+# キャッシュファイル
+__pycache__/
+*.pyc
+
+.DS_Store
