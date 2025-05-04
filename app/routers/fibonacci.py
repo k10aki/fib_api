@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Depends, HTTPException, status
 from typing import Union
 
-from app.calculate_fibonacci import calculate_fibonacci
+from app.services.calculate_fibonacci import calculate_fibonacci
 from app.exceptions.custom_exceptions import FibonacciParameterError
 
 # ルーターの作成
