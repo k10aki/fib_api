@@ -1,82 +1,66 @@
 from fastapi import APIRouter, Query, Depends, HTTPException, status
 from typing import Union
-from fastapi.responses import JSONResponse
 
 from app.calculate_fibonacci import calculate_fibonacci
+from app.exceptions.custom_exceptions import FibonacciParameterError
 
-
+# ルーターの作成
 router = APIRouter(
-    prefix="/fib",  # このルーターのパスプレフィックス
-    tags=["fibonacci"]  # ドキュメント用のタグ
+    prefix="/fib",
+    tags=["fibonacci"]
 )
 
 
-# n の取得、検証、変換を行う
-def validate_n(
+def validate_fibonacci_n(
     n_str: Union[str, None] = Query(None, alias="n", description="The index 'n' of the Fibonacci number (must be >= 1)")
-) -> Union[int, JSONResponse]: 
+) -> int:
     """
-    クエリパラメータ 'n' を検証し、有効な場合は整数として返す依存関数。
-    無効な場合は HTTP 400 エラーを発生させる。
+    フィボナッチ数列のインデックス 'n' を検証する依存関数
+    カスタム例外FibonacciParameterErrorを使用して、フィボナッチエンドポイント用のエラー処理を行う
+    Args:
+        n_str (str): フィボナッチ数列のインデックス
+        適切な入力かチェックするために、str型で受け取る
+    Returns:
+        int: フィボナッチ数列のインデックス
     """
-    # 1. 入力なしチェック
-    if n_str is None:
-        print("Validation Error: 'n' is missing.") 
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"status": status.HTTP_400_BAD_REQUEST,
-                    "message": "Bad request. Query parameter 'n' (int : >=1) is required."}
-        )
 
-    # 2. 整数変換チェック (文字列、小数を弾く)
+    # 入力なしチェック
+    if n_str is None:
+        print("Validation Error: 'n' is missing.")
+        raise FibonacciParameterError(
+            "Bad request. Query parameter 'n' (positive integer) is required.")
+
+    # 整数変換チェック
     try:
         n_int = int(n_str)
     except ValueError:
-        print(f"Validation Error: 'n' ({n_str}) is not a valid integer.") 
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"status": status.HTTP_400_BAD_REQUEST,
-                    "message": f"Bad request. Input 'n' must be an integer (>= 1). Received: '{n_str}'"} # 少し詳細なメッセージ
-        )
+        print(f"Validation Error: 'n' ({n_str}) is not a valid integer.")
+        raise FibonacciParameterError(
+            f"Bad request. Input 'n' must be a positive integer (>= 1). Received: {n_str}")
 
-    # 3. 範囲チェック (1以上か)
+    # 範囲チェック
     if n_int < 1:
-        print(f"Validation Error: 'n' ({n_int}) is not positive.") # ログ
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"status": status.HTTP_400_BAD_REQUEST,
-                    "message": f"Bad request. Input 'n' must be a positive integer (>= 1). Received: {n_int}"}
-        )
+        print(f"Validation Error: 'n' ({n_int}) is not positive.")
+        raise FibonacciParameterError(
+            f"Bad request. Input 'n' must be a positive integer (>= 1). Received: {n_str}")
 
-    # すべてのチェックをパスしたら、検証済みの整数値を返す
     return n_int
 
 
 @router.get("")
-async def get_fibonacci(
-    n: int = Depends(validate_n)  # validate_n関数を依存関数として使用: 
-):
+async def get_fibonacci(n: int = Depends(validate_fibonacci_n)):
     """
-    n番目のフィボナッチ数を計算するAPIエンドポイント。
-    クエリパラメータとしてnを受け取り、フィボナッチ数列のn番目の値を返す。
-    nは1以上の整数
-
-    Args:
-        n (int): フィボナッチ数列のインデックス (1以上の整数)
-        クエリパラメータとして指定する。
-
-    Returns:
-        int: n番目のフィボナッチ数
+    n番目のフィボナッチ数を計算するAPIエンドポイント
     """
     try:
         result = calculate_fibonacci(n)
     except Exception as e:
-        # 計算中の内部エラーは 500 を返す
         print(f"Error during Fibonacci calculation for n={n}: {e}")
+        # 内部エラーは500を返す
+        # これはフィボナッチAPI専用のエラーではないため、標準のHTTPExceptionを使用
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={"status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "Internal server error during calculation."}
+            detail={"status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": "Internal server error during calculation."}
         )
 
     # 正常レスポンス
