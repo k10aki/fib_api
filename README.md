@@ -62,7 +62,12 @@ fib_api/
 
 1. リポジトリをクローン
    ```
-   git clone https://github.com/username/fib_api.git
+   # HTTPSの場合
+   git clone https://github.com/k10aki/fib_api.git
+
+   # SSHの場合
+   git clone git@github.com:k10aki/fib_api.git
+
    cd fib_api
    ```
 
@@ -78,19 +83,13 @@ fib_api/
    pip install -r requirements.txt
    ```
 
-### サーバーの起動
+### ローカルでのサーバーの起動例
 
-開発サーバーを起動するには:
 ```
 uvicorn app.main:app --reload
 ```
 
-本番環境では:
-```
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-
-## APIの使い方
+## ローカルでのAPIの使い方
 
 ### フィボナッチ数の取得
 
@@ -111,7 +110,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ```bash
 # 10番目のフィボナッチ数を取得
-curl -X GET "http://localhost:8000/fib?n=10"
+curl -X GET -H "Content-Type: application/json" "http://localhost:8000/fib?n=10"
 
 # レスポンス
 {"result": 55}
@@ -129,7 +128,7 @@ curl -X GET -H "Content-Type: application/json" "http://localhost:8000/fib?n=99"
 
 ```bash
 # パラメータなし
-curl -X GET "http://localhost:8000/fib"
+curl -X GET  -H "Content-Type: application/json" "http://localhost:8000/fib"
 
 # レスポンス
 {"status": 400, "message": "Bad request. Query parameter 'n' (positive integer) is required."}
@@ -137,7 +136,7 @@ curl -X GET "http://localhost:8000/fib"
 
 ```bash
 # 無効なパラメータ
-curl -X GET "http://localhost:8000/fib?n=abc"
+curl -X GET -H "Content-Type: application/json" "http://localhost:8000/fib?n=abc"
 
 # レスポンス
 {"status": 400, "message": "Bad request. Input 'n' must be a positive integer (>= 1). Received: abc"}
@@ -147,7 +146,7 @@ curl -X GET "http://localhost:8000/fib?n=abc"
 
 テストを実行するには:
 ```
-pytest
+pytest -v
 ```
 
 テスト内容:
@@ -160,13 +159,6 @@ pytest
 - 整数以外の値が渡された時のテスト
 - 大きな数値のテスト
 - calculate_fibonacci関数の単体テスト
-
-## APIドキュメント
-
-Swagger UIによるAPIドキュメントは、サーバー起動後に以下のURLで確認できます:
-```
-http://localhost:8000/docs
-```
 
 ## 実装上の特徴
 
