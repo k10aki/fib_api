@@ -1,6 +1,6 @@
 # Fibonacci API
 
-フィボナッチ数列のn番目の数を返すRESTful APIサービス。
+フィボナッチ数列のn番目の数を返すRESTAPIサービス。
 
 ## 概要
 

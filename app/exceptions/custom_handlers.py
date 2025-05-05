@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from app.exceptions.custom_exceptions import FibonacciParameterError
 
 
-async def fibonacci_parameter_handler(
+async def fibonacci_parameter_errorhandler(
         request: Request,
         exc: FibonacciParameterError) -> JSONResponse:
     """

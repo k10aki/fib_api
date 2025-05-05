@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.routers.fibonacci import router as fibonacci_router
 from app.exceptions.custom_exceptions import FibonacciParameterError
-from app.exceptions.custom_handlers import fibonacci_parameter_handler
+from app.exceptions.custom_handlers import fibonacci_parameter_errorhandler
 
 
 app = FastAPI()
@@ -11,7 +11,7 @@ app = FastAPI()
 # fib用のカスタムエラーハンドラーの登録
 app.add_exception_handler(
     FibonacciParameterError,
-    fibonacci_parameter_handler
+    fibonacci_parameter_errorhandler
 )
 
 # ルーターの登録
