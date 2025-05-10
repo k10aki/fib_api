@@ -1,18 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
+from fastapi.exceptions import RequestValidationError
 
 from app.routers.fibonacci import router as fibonacci_router
-from app.exceptions.custom_exceptions import FibonacciParameterError
-from app.exceptions.custom_handlers import fibonacci_parameter_errorhandler
+from app.exceptions.custom_handlers import validation_exception_handler
 
 
 app = FastAPI()
 
-
-# fib用のカスタムエラーハンドラーの登録
+# RequestValidationErrorハンドラーの登録
 app.add_exception_handler(
-    FibonacciParameterError,
-    fibonacci_parameter_errorhandler
-)
+    RequestValidationError,
+    validation_exception_handler)
 
 # ルーターの登録
 app.include_router(fibonacci_router)
