@@ -33,7 +33,7 @@ class TestFibonacciAPI:
             assert response.json() == {"result": expected}
     
     def test_fibonacci_missing_parameter(self):
-        """パラメータなしの場合のテスト"""
+        """パラメータなしの場合のテスト - 400 Bad Request"""
         response = client.get("/fib")
         assert response.status_code == 400
         assert response.json() == {
@@ -42,38 +42,38 @@ class TestFibonacciAPI:
         }
     
     def test_fibonacci_invalid_parameter_type(self):
-        """文字列が渡された時のテスト"""
+        """文字列が渡された時のテスト - 422 Unprocessable Entity"""
         response = client.get("/fib?n=abc")
-        assert response.status_code == 400
+        assert response.status_code == 422  # 変更: 400 → 422
         assert response.json() == {
-            "status": 400,
+            "status": 422,  # 変更: 400 → 422
             "message": "Bad request. Input 'n' must be a positive integer (>= 1). Received: abc"
         }
 
     def test_fibonacci_negative_parameter(self):
-        """負の値のテスト"""
+        """負の値のテスト - 422 Unprocessable Entity"""
         response = client.get("/fib?n=-5")
-        assert response.status_code == 400
+        assert response.status_code == 422  # 変更: 400 → 422
         assert response.json() == {
-            "status": 400,
+            "status": 422,  # 変更: 400 → 422
             "message": "Bad request. Input 'n' must be a positive integer (>= 1). Received: -5"
         }
 
     def test_fibonacci_zero_parameter(self):
-        """0が渡された時のテスト"""
+        """0が渡された時のテスト - 422 Unprocessable Entity"""
         response = client.get("/fib?n=0")
-        assert response.status_code == 400
+        assert response.status_code == 422  # 変更: 400 → 422
         assert response.json() == {
-            "status": 400,
+            "status": 422,  # 変更: 400 → 422
             "message": "Bad request. Input 'n' must be a positive integer (>= 1). Received: 0"
         }
     
     def test_fibonacci_not_int_number(self):
-        """整数以外の値が渡された時のテスト"""
+        """整数以外の値が渡された時のテスト - 422 Unprocessable Entity"""
         response = client.get("/fib?n=3.14")
-        assert response.status_code == 400
+        assert response.status_code == 422  # 変更: 400 → 422
         assert response.json() == {
-            "status": 400,
+            "status": 422,  # 変更: 400 → 422
             "message": "Bad request. Input 'n' must be a positive integer (>= 1). Received: 3.14"
         }
 
@@ -94,6 +94,3 @@ class TestFibonacciAPI:
         assert calculate_fibonacci(5) == 5
         assert calculate_fibonacci(10) == 55
     
-
-
-
