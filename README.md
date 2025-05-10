@@ -26,7 +26,6 @@ fib_api/
 │   ├── main.py
 │   ├── exceptions/
 │   │   ├── __init__.py
-│   │   ├── custom_exceptions.py
 │   │   └── custom_handlers.py
 │   ├── routers/
 │   │   ├── __init__.py
@@ -43,7 +42,6 @@ fib_api/
 
 - **main.py**: アプリケーションのエントリーポイント。FastAPIアプリケーションの設定と起動を担当。
 - **exceptions/**: カスタム例外とエラーハンドラーを定義。
-  - **custom_exceptions.py**: フィボナッチAPIのパラメータエラー用のカスタム例外クラス。
   - **custom_handlers.py**: エラーハンドラー関数で、課題仕様に沿ったエラーレスポンス形式を返す。
 - **routers/**: APIエンドポイントの定義。
   - **fibonacci.py**: フィボナッチ数列のAPIエンドポイントとパラメータ検証ロジック。
@@ -103,8 +101,8 @@ uvicorn app.main:app --reload
 - レスポンス本文: `{"result": フィボナッチ数}`
 
 **エラーレスポンス**:
-- ステータスコード: 400 Bad Request
-- レスポンス本文: `{"status": 400, "message": "エラーメッセージ"}`
+- ステータスコード: 400 Bad Request または 422 Unprocessable Entity
+- レスポンス本文: `{"status": ステータスコード, "message": "エラーメッセージ"}`
 
 ### 使用例
 
@@ -139,7 +137,23 @@ curl -X GET  -H "Content-Type: application/json" "http://localhost:8000/fib"
 curl -X GET -H "Content-Type: application/json" "http://localhost:8000/fib?n=abc"
 
 # レスポンス
-{"status": 400, "message": "Bad request. Input 'n' must be a positive integer (>= 1). Received: abc"}
+{"status": 422, "message": "Bad request. Input 'n' must be a positive integer (>= 1). Received: abc"}
+```
+
+```bash
+# 数値が範囲外（負の値）
+curl -X GET -H "Content-Type: application/json" "http://localhost:8000/fib?n=-5"
+
+# レスポンス
+{"status": 422, "message": "Bad request. Input 'n' must be a positive integer (>= 1). Received: -5"}
+```
+
+```bash
+# 整数以外の値
+curl -X GET -H "Content-Type: application/json" "http://localhost:8000/fib?n=3.14"
+
+# レスポンス
+{"status": 422, "message": "Bad request. Input 'n' must be a positive integer (>= 1). Received: 3.14"}
 ```
 
 ## テスト実行
@@ -163,7 +177,7 @@ pytest -v
 ## 実装上の特徴
 
 - **パフォーマンス最適化**: フィボナッチ数の計算において反復処理を使用し、再帰呼び出しによるパフォーマンス低下を防止。
-- **エラー処理**: カスタム例外とハンドラーを使用して、課題に即したエラーレスポンスを提供。
+- **エラー処理**: カスタムエラーハンドラーを使用して、課題に即したエラーレスポンスを提供。
 - **バリデーション**: リクエストパラメータに対するバリデーションを実装。
 - **保守性と変更容易性**: サービス層、ルーティング層、エラー処理層を分離。
 - **テスト**: ユニットテストにより、APIの正常動作と様々なエラー条件の処理を検証。
