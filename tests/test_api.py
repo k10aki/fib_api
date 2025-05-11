@@ -7,6 +7,9 @@ client = TestClient(app)
 
 
 class TestFibonacciAPI:
+    """
+    フィボナッチAPIのテストクラス
+    """
     def test_read_root(self):
         """
         ルートエンドポイントのテスト
@@ -104,4 +107,3 @@ class TestFibonacciAPI:
         assert calculate_fibonacci(4) == 3
         assert calculate_fibonacci(5) == 5
         assert calculate_fibonacci(10) == 55
-    

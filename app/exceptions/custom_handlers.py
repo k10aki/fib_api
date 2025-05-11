@@ -5,6 +5,16 @@ from fastapi.responses import JSONResponse
 
 async def validation_exception_handler(
         request: Request, exc: RequestValidationError):
+    """
+    リクエストパラメータのバリデーションエラーを処理するためのカスタムハンドラー
+    fibonacciエンドポイントに特化したエラーメッセージを返す
+    Args:
+        request (Request): リクエストオブジェクト
+        exc (RequestValidationError): バリデーションエラーオブジェクト
+    Returns:
+        JSONResponse: エラーレスポンス
+    """
+    # リクエストURLが"/fib"で始まる場合
     if request.url.path.startswith("/fib"):
         errors = exc.errors()
         error_message = "Bad request."
@@ -39,7 +49,7 @@ async def validation_exception_handler(
             content={"status": status_code, "message": error_message}
         )
 
-    # 他のエンドポイントからのリクエストの場合はデフォルトのエラーレスポンスを返す
+    # "/fib"以外のエンドポイントからのリクエストの場合はデフォルトのエラーレスポンスを返す
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={"detail": exc.errors()}

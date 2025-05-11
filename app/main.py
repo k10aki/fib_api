@@ -8,6 +8,9 @@ from app.exceptions.custom_handlers import validation_exception_handler
 app = FastAPI()
 
 # RequestValidationErrorハンドラーの登録
+# ルートエンドポイント"/fib"に特化したカスタムハンドラーを登録
+# これにより、"/fib"エンドポイントに対するリクエストのバリデーションエラーが発生した場合、
+# ルートエンドポイント"/fib"に特化したカスタムハンドラーが呼び出される
 app.add_exception_handler(
     RequestValidationError,
     validation_exception_handler)
