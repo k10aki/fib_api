@@ -21,7 +21,7 @@ app.include_router(fibonacci_router)
 
 # ルートエンドポイントの定義
 @app.get("/")
-async def read_root():
+def read_root():
     """
     ルートエンドポイント
     """

@@ -10,7 +10,7 @@ router = APIRouter(
 
 
 @router.get("")
-async def get_fibonacci(
+def get_fibonacci(
     n: int = Query(
         ...,
         ge=1,
