@@ -34,6 +34,7 @@ def get_fibonacci(
             {
                 "result": <フィボナッチ数>
             }
+
     """
     try:
         result = calculate_fibonacci(n)

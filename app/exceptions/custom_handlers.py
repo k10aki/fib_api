@@ -15,6 +15,7 @@ def validation_exception_handler(
 
     Returns:
         JSONResponse: エラーレスポンス
+
     """
     # リクエストURLが"/fib"で始まる場合
     if request.url.path.startswith("/fib"):
