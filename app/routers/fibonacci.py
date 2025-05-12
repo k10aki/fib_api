@@ -19,6 +19,21 @@ async def get_fibonacci(
 ):
     """
     n番目のフィボナッチ数を計算するAPIエンドポイント
+
+    Args:
+        n (int): フィボナッチ数列のインデックス
+        クエリパラメータとして指定する必要がある
+        ge=1で, 1以上の整数であることをバリデーションする
+        問題があるとバリデーションエラーを返す
+        /fibにおけるnのバリデーションエラーは
+        app/exceptions/custom_handlers.pyの
+        validation_exception_handler()で処理される
+    
+    Returns:
+        dict: フィボナッチ数の計算結果
+            {
+                "result": <フィボナッチ数>
+            }
     """
     try:
         result = calculate_fibonacci(n)

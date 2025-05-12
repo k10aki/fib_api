@@ -8,9 +8,11 @@ async def validation_exception_handler(
     """
     リクエストパラメータのバリデーションエラーを処理するためのカスタムハンドラー
     fibonacciエンドポイントに特化したエラーメッセージを返す
+
     Args:
         request (Request): リクエストオブジェクト
         exc (RequestValidationError): バリデーションエラーオブジェクト
+
     Returns:
         JSONResponse: エラーレスポンス
     """
